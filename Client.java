@@ -4,7 +4,7 @@ import java.net.*;
 import java.io.*;
 
 
-public class ClientTeste {
+public class Client {
 	
 	public static void verificaMovimento(double x, double y, Dimension d, Robot robot) {
 		double xmax = (double) d.width-1;
