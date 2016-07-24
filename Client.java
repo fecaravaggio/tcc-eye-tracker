@@ -1,88 +1,34 @@
 import java.awt.*;
-import java.awt.event.KeyEvent;
 import java.net.*;
 import java.io.*;
-
+import java.util.ArrayList;
+import java.util.Iterator;
+import java.util.List;
 
 public class Client {
-	
-	public static void verificaMovimento(double x, double y, Dimension d, Robot robot) {
-		double xmax = (double) d.width-1;
-		double ymax = (double) d.height-1;
-		double esquerda = xmax/3, direita = xmax*2/3;
-		double acima = ymax/3, abaixo = ymax*2/3;
-		//boolean esq = false, dir = false, cima = false, baixo = false;
-		
-		/*
-		//vira a esquerda
-		if (esq == false && x < esquerda && y > acima && y < abaixo) {
-			robot.keyPress(KeyEvent.VK_LEFT);
-			esq = true;
-		}
-		//vira a direita
-		if (dir == false && x > direita && y > acima && y < abaixo) {
-			robot.keyPress(KeyEvent.VK_RIGHT);
-			dir = true;
-		}
-		//anda para frente
-		if (cima == false && y < acima && x < direita && x > esquerda) {
-			robot.keyPress(KeyEvent.VK_W);
-			cima = true;
-		}
-		//anda para trás
-		if (baixo == false && y > abaixo && x < direita && x > esquerda) {
-			robot.keyPress(KeyEvent.VK_S);
-			baixo = true;
-		}
-		
-		robot.keyRelease(KeyEvent.VK_LEFT);
-		robot.keyRelease(KeyEvent.VK_RIGHT);
-		robot.keyRelease(KeyEvent.VK_W);
-		robot.keyRelease(KeyEvent.VK_S);
-		
-		*/
-		
-
-		if (x < esquerda && y > acima && y < abaixo) {
-			//vira a esquerda
-			robot.keyPress(KeyEvent.VK_LEFT);
-		}
-		else {
-			robot.keyRelease(KeyEvent.VK_LEFT);
-			if (x > direita && y > acima && y < abaixo) {
-				//vira a direita
-				robot.keyPress(KeyEvent.VK_RIGHT);
-			}
-			else {
-				robot.keyRelease(KeyEvent.VK_RIGHT);
-				//centro da tela
-				if (y < acima && x < direita && x > esquerda)
-					//acima
-					robot.keyPress(KeyEvent.VK_W);
-				else {
-					robot.keyRelease(KeyEvent.VK_W);
-					if (y > abaixo && x < direita && x > esquerda)
-						//abaixo
-						robot.keyPress(KeyEvent.VK_S);
-					else {
-						robot.keyRelease(KeyEvent.VK_S);
-						System.out.println("zona neutra");
-					}
-				}
-			}
-		}
-	}
 
 	public static void main(String[] args) {
 		
 		Dimension dim = Toolkit.getDefaultToolkit().getScreenSize();
-		//System.out.println("Tamanho da tela: largura = " + dim.width + " e altura = " + dim.height);
+		//System.out.println("Tamanho da tela: largura = " + dim.width + " e altura = " + dim.height);	
 		
 		try {
 
 			Socket socket = new Socket("localhost", 3000);
 			DataInputStream in = new DataInputStream(socket.getInputStream());
 			Robot robot = new Robot();
+			List<QuadradoTela> listaQuadrado = new ArrayList<QuadradoTela>();
+			
+			//Criação dos objetos das regiões da tela 
+			QuadradoTela quadrado1 = new QuadradoEsq(0, (dim.getHeight()-1)/3, (dim.getWidth()-1)/3, (dim.getHeight()-1)*2/3, dim);
+			QuadradoTela quadrado2 = new QuadradoDir( (dim.getWidth()-1)*2/3, (dim.getHeight()-1)/3, dim.getWidth()-1, (dim.getHeight()-1)*2/3, dim);
+			QuadradoTela quadrado3 = new QuadradoAcima((dim.getWidth()-1)/3, 0, (dim.getWidth()-1)*2/3, (dim.getHeight()-1)/3, dim);
+			QuadradoTela quadrado4 = new QuadradoAbaixo((dim.getWidth()-1)/3, (dim.getHeight()-1)*2/3, (dim.getWidth()-1)*2/3, dim.getHeight()-1, dim);
+			
+			listaQuadrado.add(quadrado1);
+			listaQuadrado.add(quadrado2);
+			listaQuadrado.add(quadrado3);
+			listaQuadrado.add(quadrado4);
 
 			while(true){
 
@@ -92,10 +38,19 @@ public class Client {
 				double y = in.readDouble();
 
 				System.out.println(status + " " + time + ": (" + x + ", " + y + ")");
-			
-				verificaMovimento(x, y, dim, robot);
 				
+				Iterator<QuadradoTela> iter = listaQuadrado.iterator();
 				
+				int i = 1;
+				
+				//Verifica a lista das regiões da tela, se o ponteiro está em algum deles
+				while (iter.hasNext()) {
+					System.out.println("iterador: " + i);
+					i++;
+					QuadradoTela aux = iter.next();
+					aux.ponteiroMouseAqui(x, y);
+					aux.movimentoMouse(robot);
+				}			
 				
 			}
 		}
