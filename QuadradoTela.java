@@ -4,13 +4,15 @@ public abstract class QuadradoTela {
 	
 	boolean ponteiro;
 	double posX, posY, posXFim, posYFim;
+	ThreadVelocidade thread;
 	
-	public QuadradoTela (double posX, double posY, double posXFim, double posYFim, Dimension dimTela) {
+	public QuadradoTela (ThreadVelocidade thread, double posX, double posY, double posXFim, double posYFim, Dimension dimTela) {
 		
 		this.posX = posX;
 		this.posY = posY;
 		this.posXFim = posXFim;
 		this.posYFim = posYFim;
+		this.thread = thread;
 		
 	}	
 	
@@ -19,7 +21,6 @@ public abstract class QuadradoTela {
 		if ((x >= posX && x <= posXFim) && (y >= posY && y <= posYFim)) {
 			ponteiro = true;
 			System.out.println("Ponteiro true...");
-			//iniciaMovimento(robot);
 		}
 		else {
 			ponteiro = false;
@@ -27,6 +28,6 @@ public abstract class QuadradoTela {
 		}
 	}
 	
-	abstract void movimentoMouse (Robot robot);
+	abstract void movimentoMouse ();
 
 }
