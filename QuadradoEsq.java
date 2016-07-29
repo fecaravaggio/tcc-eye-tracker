@@ -1,22 +1,19 @@
-import java.awt.*;	
-import java.awt.event.KeyEvent;
+import java.awt.*;
 
 public class QuadradoEsq extends QuadradoTela {
 
-	public QuadradoEsq(double posX, double posY, double posXFim, double posYFim, Dimension dimTela) {
+	public QuadradoEsq(ThreadVelocidade thread, double posX, double posY, double posXFim, double posYFim, Dimension dimTela) {
 		
-		super(posX, posY, posXFim, posYFim, dimTela);
+		super(thread, posX, posY, posXFim, posYFim, dimTela);
 		
 	}
 	
 	@Override
-	void movimentoMouse(Robot robot) {
-		if (ponteiro == true) {
-			robot.keyPress(KeyEvent.VK_LEFT);
-		}
-		else {
-			robot.keyRelease(KeyEvent.VK_LEFT);	
-		}
+	void movimentoMouse() {
+		if (ponteiro == true)
+			thread.velocidadeBotao(0, Client.VELOCIDADE);
+		else
+			thread.velocidadeBotao(0, 0);	
 	}
 
 }
